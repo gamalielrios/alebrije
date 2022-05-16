@@ -32,9 +32,9 @@ pkdata=pkey.read()
 pubkey=rsa.PublicKey.load_pkcs1(pkdata)
 
 #encriptando el archivo con la llave simetrica
-encrypted_key=rsa.encrypt(myfiledata,pubkey)
+encrypted_file=rsa.encrypt(myfiledata,pubkey)
 
-ekey=open('encrypted_key','wb')
-ekey.write(encrypted_key)
+ekey=open('encrypted_file','wb')
+ekey.write(encrypted_file)
 
-print(encrypted_key)
+print(encrypted_file)
