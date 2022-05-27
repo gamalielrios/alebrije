@@ -1,5 +1,6 @@
 import fernet
 import rsa
+import base64
 '''#r=crypto.Random.new().read
 (pubkey,privkey)=rsa.newkeys(1024)
 message=b'mysecret'
@@ -14,9 +15,17 @@ print(decr.decode())'''
 #cipher=fernet.Fernet(key)
 
 #abriendo el archivo a cifrar
-myfile=open('archivo.txt','rb')
+#abrir el archivo a encriptar en modo lectura binaria
+myfile=open('3er.JPG','rb')
 myfiledata=myfile.read()
+print(myfiledata)
+myfile2=open('img.txt','rb')
+myfiledata2=myfile2.read()
+convert_img= base64.b64encode(myfiledata)
+imgb64=open('img_b64.bin','wb')
+imgb64.write(convert_img)
 
+print(imgb64)
 #encriptar archivo
 #encrypted_data=cipher.encrypt(myfiledata)
 #edata=open('archivoencriptado','wb')
@@ -25,16 +34,17 @@ myfiledata=myfile.read()
 #print(encrypted_data)
 
 #abrir llave publica
+#abrir la llave publica para cifrar en modo lectura binaria
 pkey=open('publickey.key','rb')
 pkdata=pkey.read()
 
 #cargar la llave
 pubkey=rsa.PublicKey.load_pkcs1(pkdata)
 
-#encriptando el archivo con la llave simetrica
-encrypted_file=rsa.encrypt(myfiledata,pubkey)
+#encriptando el archivo con la llave publica
+encrypted_file=rsa.encrypt(myfiledata2,pubkey)
 
-ekey=open('encrypted_file','wb')
+#creando el archivo encriptado
+ekey=open('img_encriptad45','wb')
 ekey.write(encrypted_file)
-
-print(encrypted_file)
+#print(encrypted_file)
